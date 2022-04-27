@@ -78,8 +78,8 @@ namespace x\link {
                     $vvv = $that[$kk];
                     if (\is_callable($vv = $v[$kk] ?? \P)) {
                         $vvv = \fire($vv, [$vvv, $kk, $k], $that);
-                    } else if ('script' === $kk || 'style' === $kk) {
-                        $vvv = \call_user_func(__NAMESPACE__ . "\\content\\" . $kk, $vvv, $that[2]);
+                    } else {
+                        $vvv = \call_user_func(__NAMESPACE__ . "\\content\\" . ('style' === $kk ? $kk : 'script'), $vvv, $that[2]);
                     }
                     $that[$kk] = $vvv;
                 }
