@@ -48,8 +48,8 @@ return [
             'xlink:href' => "\\x\\link\\data\\svg\\href"
         ],
         'video' => [
-            'src' => 1,
-            'poster' => 1
+            'poster' => 1,
+            'src' => 1
         ]
     ]
 ];
