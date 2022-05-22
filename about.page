@@ -11,3 +11,13 @@ use:
 ...
 
 This extension will convert relative links in anchors and images (and some attributes on other elements that have been registered in the `.\lot\x\link\state.php` file) into full links.
+
+### Hooks
+
+Data that can’t be detected easily as links because they are outside the HTML markup can be wrapped in this `link` hook, so that they can be resolved too:
+
+~~~ .php
+$kick = '/foo/bar/baz';
+
+header('location: ' . Hook::fire('link', [$kick]));
+~~~
