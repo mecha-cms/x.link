@@ -3,7 +3,6 @@
   "license": "GPL-3.0-or-later",
   "name": "mecha-cms/x.link",
   "require": {
-    "mecha-cms/mecha": "*",
     "mecha-cms/x.layout": "*"
   }
 }
