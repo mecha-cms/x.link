@@ -20,14 +20,14 @@ namespace x\link {
                 if (!$v || false === \strpos($content, '</' . $k . '>')) {
                     continue;
                 }
-                $content = \preg_replace_callback('/(<' . \x($k) . $z . '?>)([\s\S]*?)(<\/' . \x($k) . '>)/u', static function($m) use($v) {
+                $content = \preg_replace_callback('/(<' . \x($k) . $z . '?>)([\s\S]*?)(<\/' . \x($k) . '>)/u', static function ($m) use ($v) {
                     $m[2] = \is_callable($v) ? \fire($v, [$m[2], (new \HTML($m[1]))[2] ?? []]) : \x\link\link($m[2]);
                     return $m[1] . $m[2] . $m[3];
                 }, $content);
             }
         }
         if ($alter_data) {
-            $keep = (static function($tags) use($z) {
+            $keep = (static function ($tags) use ($z) {
                 $out = [];
                 foreach ($tags as $tag) {
                     $out[] = '<' . \x($tag) . $z . '?>[\s\S]*?<\/' . \x($tag) . '>';
@@ -38,7 +38,7 @@ namespace x\link {
             foreach (\preg_split('/(' . $keep . ')/i', $content, -1, \PREG_SPLIT_DELIM_CAPTURE | \PREG_SPLIT_NO_EMPTY) as $part) {
                 $n = \strtok(\substr($part, 1, -1), " \n\r\t>");
                 if ($part && '<' === $part[0] && '>' === \substr($part, -1) && '</' . $n . '>' === \substr($part, -(\strlen($n) + 3))) {
-                    $out .= !empty($alter_data[$n]) ? \preg_replace_callback('/^<[\p{L}\p{N}_:-]+' . $z . '?>/u', static function($m) use($alter_data) {
+                    $out .= !empty($alter_data[$n]) ? \preg_replace_callback('/^<[\p{L}\p{N}_:-]+' . $z . '?>/u', static function ($m) use ($alter_data) {
                         return \x\link\data($m[0], $alter_data);
                     }, $part) : $part;
                 } else {
@@ -65,7 +65,7 @@ namespace x\link {
                 continue;
             }
             $v = (array) $v;
-            $content = \preg_replace_callback('/<' . \x($k) . '(' . $z . ')>/u', static function($m) use($k, $v) {
+            $content = \preg_replace_callback('/<' . \x($k) . '(' . $z . ')>/u', static function ($m) use ($k, $v) {
                 if (false === \strpos($m[1], '=')) {
                     return $m[0];
                 }
@@ -116,14 +116,14 @@ namespace x\link\content {
         if (false === \strpos($content, '://')) {
             return $content;
         }
-        $content = \preg_replace_callback('/\bhttps?:\/\/[^\s"<]+\b\/?/i', static function($m) {
+        $content = \preg_replace_callback('/\bhttps?:\/\/[^\s"<]+\b\/?/i', static function ($m) {
             return \x\link\link($m[0]);
         }, $content);
         return $content;
     }
     function style($content) {
         if (false !== \strpos($content, 'url(')) {
-            $content = \preg_replace_callback('/\burl\(([^()]+)\)/', static function($m) {
+            $content = \preg_replace_callback('/\burl\(([^()]+)\)/', static function ($m) {
                 if ('"' === $m[1][0] && '"' === \substr($m[1], -1)) {
                     return 'url("' . \long(\substr($m[1], 1, -1)) . '")';
                 }
@@ -136,7 +136,7 @@ namespace x\link\content {
         if (false === \strpos($content, '://')) {
             return $content;
         }
-        $content = \preg_replace_callback('/\bhttps?:\/\/[^\s"<]+\b\/?/i', static function($m) {
+        $content = \preg_replace_callback('/\bhttps?:\/\/[^\s"<]+\b\/?/i', static function ($m) {
             return \x\link\link($m[0]);
         }, $content);
         return $content;
