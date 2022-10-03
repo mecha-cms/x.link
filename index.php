@@ -14,13 +14,13 @@ namespace x\link {
         $alter = $state->x->link ?? [];
         $alter_content = (array) ($alter->content ?? []);
         $alter_data = (array) ($alter->data ?? []);
-        $z = '(?:\s[\p{L}\p{N}_:-]+(?:=(?:"[^"]*"|\'[^\']*\'|[^\/>])*)?)';
+        $z = '(?:\s[\p{L}\p{N}_:-]+(?:=(?:"[^"]*"|\'[^\']*\'|[^\/>]*))?)*';
         if ($alter_content) {
             foreach ($alter_content as $k => $v) {
                 if (!$v || false === \strpos($content, '</' . $k . '>')) {
                     continue;
                 }
-                $content = \preg_replace_callback('/(<' . \x($k) . $z . '*>)([\s\S]*?)(<\/' . \x($k) . '>)/iu', static function ($m) use ($v) {
+                $content = \preg_replace_callback('/(<' . \x($k) . $z . '>)([\s\S]*?)(<\/' . \x($k) . '>)/iu', static function ($m) use ($v) {
                     $m[2] = \is_callable($v) ? \fire($v, [$m[2], (new \HTML($m[1]))[2] ?? []]) : \x\link\link($m[2]);
                     return $m[1] . $m[2] . $m[3];
                 }, $content);
@@ -30,7 +30,7 @@ namespace x\link {
             $keep = (static function ($tags) use ($z) {
                 $out = [];
                 foreach ($tags as $tag) {
-                    $out[] = '<' . \x($tag) . $z . '*>[\s\S]*?<\/' . \x($tag) . '>';
+                    $out[] = '<' . \x($tag) . $z . '>[\s\S]*?<\/' . \x($tag) . '>';
                 }
                 return \implode('|', $out);
             })(\array_keys($alter_content));
@@ -38,7 +38,7 @@ namespace x\link {
             foreach (\preg_split('/(' . $keep . ')/iu', $content, -1, \PREG_SPLIT_DELIM_CAPTURE | \PREG_SPLIT_NO_EMPTY) as $part) {
                 $n = \strtok(\substr($part, 1, -1), " \n\r\t>");
                 if ($part && '<' === $part[0] && '>' === \substr($part, -1) && '</' . $n . '>' === \substr($part, -(\strlen($n) + 3))) {
-                    $out .= !empty($alter_data[$n]) ? \preg_replace_callback('/^<[\p{L}\p{N}_:-]+' . $z . '?>/u', static function ($m) use ($alter_data) {
+                    $out .= !empty($alter_data[$n]) ? \preg_replace_callback('/^<[\p{L}\p{N}_:-]+' . $z . '>/iu', static function ($m) use ($alter_data) {
                         return \x\link\data($m[0], $alter_data);
                     }, $part) : $part;
                 } else {
@@ -53,7 +53,7 @@ namespace x\link {
         if (!$content || false === \strpos($content, '<')) {
             return $content;
         }
-        $z = '(?:\s[\p{L}\p{N}_:-]+(?:=(?:"[^"]*"|\'[^\']*\'|[^\/>])*)?)';
+        $z = '(?:\s[\p{L}\p{N}_:-]+(?:=(?:"[^"]*"|\'[^\']*\'|[^\/>]*))?)*';
         foreach ($data as $k => $v) {
             if (!$v || (
                 false === \strpos($content, '</' . $k . '>') &&
@@ -65,7 +65,7 @@ namespace x\link {
                 continue;
             }
             $v = (array) $v;
-            $content = \preg_replace_callback('/<' . \x($k) . '(' . $z . '*)>/iu', static function ($m) use ($k, $v) {
+            $content = \preg_replace_callback('/<' . \x($k) . '(' . $z . ')>/iu', static function ($m) use ($k, $v) {
                 if (false === \strpos($m[1], '=')) {
                     return $m[0];
                 }
