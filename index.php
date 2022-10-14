@@ -169,3 +169,9 @@ namespace x\link\data\svg {
         return \x\link\link($value);
     }
 }
+
+namespace {
+    if (\defined("\\TEST") && 'x.link' === \TEST) {
+        require __DIR__ . \D . 'test.php';
+    }
+}
