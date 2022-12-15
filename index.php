@@ -177,7 +177,7 @@ namespace x\link\data\svg {
 }
 
 namespace {
-    if (\defined("\\TEST") && 'x.link' === \TEST) {
-        require __DIR__ . \D . 'test.php';
+    if (\defined("\\TEST") && 'x.link' === \TEST && \is_file($test = __DIR__ . \D . 'test.php')) {
+        require $test;
     }
 }
