@@ -44,8 +44,8 @@ return [
         ],
         'track' => ['src' => 1],
         'use' => [ // `<svg>`
-            'href' => "\\x\\link\\data\\svg\\href",
-            'xlink:href' => "\\x\\link\\data\\svg\\href"
+            'href' => 1,
+            'xlink:href' => 1
         ],
         'video' => [
             'poster' => 1,

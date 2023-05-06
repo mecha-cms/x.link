@@ -110,7 +110,14 @@ namespace x\link {
         return \x\link\link($path ?? $GLOBALS['url']->current());
     }
     function link($path) {
-        return null !== $path ? \strtr(\long($path), ['://' . \x\link\host => '://' . \x\link\r]) : null;
+        if (\is_string($path)) {
+            if ($path && '#' === $path[0]) {
+                // Do not resolve hash-only value!
+                return $path;
+            }
+            return \strtr(\long($path), ['://' . \x\link\host => '://' . \x\link\r]);
+        }
+        return $path;
     }
     \Hook::set('content', __NAMESPACE__, 0);
     \Hook::set('kick', __NAMESPACE__ . "\\kick", 0);
@@ -163,16 +170,6 @@ namespace x\link\data\img {
             $out .= \x\link\link(\rtrim($v, ','));
         }
         return $out;
-    }
-}
-
-namespace x\link\data\svg {
-    function href($value) {
-        if ($value && \is_string($value) && '#' === $value[0]) {
-            // Do not resolve hash-only value!
-            return $value;
-        }
-        return \x\link\link($value);
     }
 }
 
