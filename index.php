@@ -1,11 +1,5 @@
 <?php
 
-namespace x {
-    function link($content) {
-        return \fire(__NAMESPACE__ . "\\link\\content", [$content]);
-    }
-}
-
 namespace x\link {
     // Get sub-folder path relative to the server’s root
     $sub = \trim(\strtr(\PATH . \D, [\rtrim(\strtr($_SERVER['DOCUMENT_ROOT'], '/', \D), \D) . \D => ""]), \D);
@@ -119,7 +113,7 @@ namespace x\link {
         }
         return $path;
     }
-    \Hook::set('content', __NAMESPACE__, 0);
+    \Hook::set('content', __NAMESPACE__ . "\\content", 0);
     \Hook::set('kick', __NAMESPACE__ . "\\kick", 0);
     \Hook::set('link', __NAMESPACE__ . "\\link", 0);
 }
