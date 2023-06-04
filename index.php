@@ -165,9 +165,6 @@ namespace x\link\data\img {
         }
         return $out;
     }
-}
-
-namespace {
     if (\defined("\\TEST") && 'x.link' === \TEST && \is_file($test = __DIR__ . \D . 'test.php')) {
         require $test;
     }
