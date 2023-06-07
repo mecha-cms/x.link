@@ -8,13 +8,13 @@ type: Markdown
 version: 2.0.2
 ...
 
-This extension will convert relative links in anchors and images (and some attributes on other elements that have been
-registered in the `.\lot\x\link\state.php` file) into full links.
+This extension converts relative links in anchors and images (and some attributes on other elements registered in
+`.\lot\x\link\state.php`) to full links.
 
 ### Hooks
 
-Data that can’t be detected easily as links because they are outside the HTML markup can be wrapped in this `link` hook,
-so that they can be resolved too:
+Other data that is not easily recognized as links because it is outside the HTML markup can be wrapped in this `link`
+hook so that it can also be resolved:
 
 ~~~ .php
 $kick = '/foo/bar/baz';
