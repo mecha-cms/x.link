@@ -18,6 +18,15 @@
 <a href="../../a">18</a>
 <a href="http://a">19</a>
 
+<img src="a">
+<img src="a"/>
+<img src="a" />
+<img
+
+src="a"
+
+/>
+
 <img onerror="this.src='/foo/bar.baz';" onload="this.src='http://127.0.0.1/foo/bar.baz';" style="background: #fff url('/foo/bar.baz') no-repeat 0 0;">
 
 <img src="a" srcset="a 1x, b 2x,c 3x,

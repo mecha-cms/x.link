@@ -14,7 +14,7 @@ namespace x\link {
         $alter = $state->x->link ?? [];
         $alter_content = (array) ($alter->content ?? []);
         $alter_data = (array) ($alter->data ?? []);
-        $z = '(?:\s[\p{L}\p{N}_:-]+(?:=(?:"[^"]*"|\'[^\']*\'|[^\/>]*))?)*';
+        $z = '\s*(?>\s[\p{L}\p{N}_:-]+(?>=(?:"[^"]*"|\'[^\']*\'|[^\/>]*))?)*\s*';
         if ($alter_content) {
             foreach ($alter_content as $k => $v) {
                 if (!$v || false === \strpos($content, '</' . $k . '>')) {
@@ -53,7 +53,7 @@ namespace x\link {
         if (!$content || false === \strpos($content, '<')) {
             return $content;
         }
-        $z = '(?:\s[\p{L}\p{N}_:-]+(?:=(?:"[^"]*"|\'[^\']*\'|[^\/>]*))?)*';
+        $z = '\s*(?>\s[\p{L}\p{N}_:-]+(?>=(?:"[^"]*"|\'[^\']*\'|[^\/>]*))?)*\s*';
         foreach ($data as $k => $v) {
             if (!$v || (
                 false === \strpos($content, '</' . $k . '>') &&
@@ -65,8 +65,8 @@ namespace x\link {
                 continue;
             }
             $v = (array) $v;
-            $content = \preg_replace_callback('/<' . \x($k) . '(' . $z . ')>/iu', static function ($m) use ($k, $v) {
-                if (false === \strpos($m[1], '=')) {
+            $content = \preg_replace_callback('/<' . \x($k) . $z . '\/?>/iu', static function ($m) use ($k, $v) {
+                if (false === \strpos($m[0], '=')) {
                     return $m[0];
                 }
                 $that = new \HTML($m[0]);
