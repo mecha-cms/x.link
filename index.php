@@ -10,7 +10,7 @@ namespace x\link {
         if (!$content || false === \strpos($content, '<')) {
             return $content;
         }
-        \extract($GLOBALS, \EXTR_SKIP);
+        \extract(\lot(), \EXTR_SKIP);
         $alter = $state->x->link ?? [];
         $alter_content = (array) ($alter->content ?? []);
         $alter_data = (array) ($alter->data ?? []);
@@ -101,7 +101,7 @@ namespace x\link {
         return $content;
     }
     function kick($path) {
-        return \x\link\link($path ?? $GLOBALS['url']->current());
+        return \x\link\link($path ?? \lot('url')->current());
     }
     function link($path) {
         if (\is_string($path)) {
