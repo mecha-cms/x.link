@@ -14,7 +14,7 @@ namespace x\link {
         $alter = $state->x->link ?? [];
         $alter_content = (array) ($alter->content ?? []);
         $alter_data = (array) ($alter->data ?? []);
-        $z = '\s*(?>\s[\p{L}\p{N}_:-]+(?>=(?:"[^"]*"|\'[^\']*\'|[^\/>]*))?)*\s*';
+        $z = '\s*(?>\s[\p{L}\p{N}_:-]+(?>=(?>"[^"]*"|\'[^\']*\'|[^\/>]*))?)*\s*';
         if ($alter_content) {
             foreach ($alter_content as $k => $v) {
                 if (!$v || false === \strpos($content, '</' . $k . '>')) {
@@ -53,7 +53,7 @@ namespace x\link {
         if (!$content || false === \strpos($content, '<')) {
             return $content;
         }
-        $z = '\s*(?>\s[\p{L}\p{N}_:-]+(?>=(?:"[^"]*"|\'[^\']*\'|[^\/>]*))?)*\s*';
+        $z = '\s*(?>\s[\p{L}\p{N}_:-]+(?>=(?>"[^"]*"|\'[^\']*\'|[^\/>]*))?)*\s*';
         foreach ($data as $k => $v) {
             if (!$v || (
                 false === \strpos($content, '</' . $k . '>') &&
