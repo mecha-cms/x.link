@@ -11,17 +11,16 @@ namespace x\link {
             return $content;
         }
         \extract(\lot(), \EXTR_SKIP);
-        $alter = $state->x->link ?? [];
-        $alter_content = (array) ($alter->content ?? []);
-        $alter_data = (array) ($alter->data ?? []);
+        $state_content = (array) ($state->x->link->content ?? []);
+        $state_data = (array) ($state->x->link->data ?? []);
         $r = "";
-        foreach (\apart($content, \array_keys($alter_content)) as $v) {
+        foreach (\apart($content, \array_keys($state_content)) as $v) {
             if (1 !== $v[1] && 2 !== $v[1]) {
                 $r .= $v[0];
                 continue;
             }
             $k = '/' !== $v[0][1] ? \strtok(\substr($v[0], 1, -1), " \n\r\t>") : \P;
-            if (false !== \strpos($t = \substr($v[0], 0, $v[2]), 'on') && \preg_match('/\bon[^=]+=/', $t)) {
+            if (false !== \strpos($t = \substr($v[0], 0, $v[2] ?? \strlen($v[0])), 'on') && \preg_match('/\bon[^=]+=/', $t)) {
                 $e = new \HTML($v[0]);
                 foreach ($e[2] as $kk => $vv) {
                     if ('on' === \substr($kk, 0, 2)) {
@@ -37,10 +36,10 @@ namespace x\link {
                 }
                 $v[0] = (string) $e;
             }
-            if ($a = $alter_content[$k] ?? 0) {
-                $c = \substr($v[0], $v[2], -(2 + \strlen($k) + 1));
+            if ($a = $state_content[$k] ?? 0) {
+                $c = \substr($v[0], $v[2] = $v[2] ?? \strlen($v[0]), -(2 + \strlen($k) + 1));
                 $e = new \HTML(\substr($v[0], 0, $v[2]));
-                if ($aa = $alter_data[$k] ?? 0) {
+                if ($aa = $state_data[$k] ?? 0) {
                     foreach ($aa as $kk => $vv) {
                         if (!$vv || !isset($e[$kk])) {
                             continue;
@@ -60,7 +59,7 @@ namespace x\link {
                 $r .= \x\link\link($c) . '</' . $k . '>';
                 continue;
             }
-            if ($a = $alter_data[$k] ?? 0) {
+            if ($a = $state_data[$k] ?? 0) {
                 $e = new \HTML($v[0]);
                 foreach ($a as $kk => $vv) {
                     if (!$vv || !isset($e[$kk])) {
