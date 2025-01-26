@@ -32,6 +32,10 @@ src="a"
 <img src="a" srcset="a 1x, b 2x,c 3x,
 d/e 4x,  f?g=200 200w">
 
+<link href="a" rel="stylesheet"/>
+
+<script src="a"></script>
+
 <script>
 const link = '/foo/bar'; // Can’t decide if this is a relative link :\
 const link = 'http://127.0.0.1/foo/bar';

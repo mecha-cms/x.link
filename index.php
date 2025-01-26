@@ -14,91 +14,70 @@ namespace x\link {
         $alter = $state->x->link ?? [];
         $alter_content = (array) ($alter->content ?? []);
         $alter_data = (array) ($alter->data ?? []);
-        $z = '\s*(?>\s[\p{L}\p{N}_:-]+(?>=(?>"[^"]*"|\'[^\']*\'|[^\/>]*))?)*\s*';
-        if ($alter_content) {
-            foreach ($alter_content as $k => $v) {
-                if (!$v || false === \strpos($content, '</' . $k . '>')) {
-                    continue;
-                }
-                $content = \preg_replace_callback('/(<' . \x($k) . $z . '>)([\s\S]*?)(<\/' . \x($k) . '>)/iu', static function ($m) use ($v) {
-                    $m[2] = \is_callable($v) ? \fire($v, [$m[2], (new \HTML($m[1]))[2] ?? []]) : \x\link\link($m[2]);
-                    return $m[1] . $m[2] . $m[3];
-                }, $content);
-            }
-        }
-        if ($alter_data) {
-            $keep = (static function ($tags) use ($z) {
-                $out = [];
-                foreach ($tags as $tag) {
-                    $out[] = '<' . \x($tag) . $z . '>[\s\S]*?<\/' . \x($tag) . '>';
-                }
-                return \implode('|', $out);
-            })(\array_keys($alter_content));
-            $out = "";
-            foreach (\preg_split('/(' . $keep . ')/iu', $content, -1, \PREG_SPLIT_DELIM_CAPTURE | \PREG_SPLIT_NO_EMPTY) as $part) {
-                $n = \strtok(\substr($part, 1, -1), " \n\r\t>");
-                if ($part && '<' === $part[0] && '>' === \substr($part, -1) && '</' . $n . '>' === \substr($part, -(\strlen($n) + 3))) {
-                    $out .= !empty($alter_data[$n]) ? \preg_replace_callback('/^<[\p{L}\p{N}_:-]+' . $z . '>/iu', static function ($m) use ($alter_data) {
-                        return \x\link\data($m[0], $alter_data);
-                    }, $part) : $part;
-                } else {
-                    $out .= \x\link\data($part, $alter_data);
-                }
-            }
-            $content = $out;
-        }
-        return $content;
-    }
-    function data($content, $data) {
-        if (!$content || false === \strpos($content, '<')) {
-            return $content;
-        }
-        $z = '\s*(?>\s[\p{L}\p{N}_:-]+(?>=(?>"[^"]*"|\'[^\']*\'|[^\/>]*))?)*\s*';
-        foreach ($data as $k => $v) {
-            if (!$v || (
-                false === \strpos($content, '</' . $k . '>') &&
-                false === \strpos($content, '<' . $k . ' ') &&
-                false === \strpos($content, '<' . $k . "\n") &&
-                false === \strpos($content, '<' . $k . "\r") &&
-                false === \strpos($content, '<' . $k . "\t")
-            )) {
+        $r = "";
+        foreach (\apart($content, \array_keys($alter_content)) as $v) {
+            if (1 !== $v[1] && 2 !== $v[1]) {
+                $r .= $v[0];
                 continue;
             }
-            $v = (array) $v;
-            $content = \preg_replace_callback('/<' . \x($k) . $z . '\/?>/iu', static function ($m) use ($k, $v) {
-                if (false === \strpos($m[0], '=')) {
-                    return $m[0];
+            $k = '/' !== $v[0][1] ? \strtok(\substr($v[0], 1, -1), " \n\r\t>") : \P;
+            if (false !== \strpos($t = \substr($v[0], 0, $v[2]), 'on') && \preg_match('/\bon[^=]+=/', $t)) {
+                $e = new \HTML($v[0]);
+                foreach ($e[2] as $kk => $vv) {
+                    if ('on' === \substr($kk, 0, 2)) {
+                        $e[$kk] = \x\link\content\script($vv, $e[2]);
+                    }
                 }
-                $that = new \HTML($m[0]);
-                // Need to do the hard way for the `on*` and `style` attribute(s)
-                foreach ($that[2] as $kk => $vv) {
-                    if (0 !== \strpos($kk, 'on') && 'style' !== $kk) {
+                $v[0] = (string) $e;
+            }
+            if (false !== \strpos($v[0], 'style=')) {
+                $e = new \HTML($v[0]);
+                if (isset($e['style'])) {
+                    $e['style'] = \x\link\content\style($e['style'], $e[2]);
+                }
+                $v[0] = (string) $e;
+            }
+            if ($a = $alter_content[$k] ?? 0) {
+                $c = \substr($v[0], $v[2], -(2 + \strlen($k) + 1));
+                $e = new \HTML(\substr($v[0], 0, $v[2]));
+                if ($aa = $alter_data[$k] ?? 0) {
+                    foreach ($aa as $kk => $vv) {
+                        if (!$vv || !isset($e[$kk])) {
+                            continue;
+                        }
+                        if (\is_callable($vv)) {
+                            $e[$kk] = \fire($vv, [$e[$kk], $kk, $k], $e);
+                            continue;
+                        }
+                        $e[$kk] = \x\link\link($e[$kk]);
+                    }
+                }
+                if (\is_callable($a)) {
+                    $c = \fire($a, [$c, $e[2]], $e);
+                    $r .= $e . $c . '</' . $k . '>';
+                    continue;
+                }
+                $r .= \x\link\link($c) . '</' . $k . '>';
+                continue;
+            }
+            if ($a = $alter_data[$k] ?? 0) {
+                $e = new \HTML($v[0]);
+                foreach ($a as $kk => $vv) {
+                    if (!$vv || !isset($e[$kk])) {
                         continue;
                     }
-                    $vvv = $that[$kk];
-                    if (\is_callable($vv = $v[$kk] ?? \P)) {
-                        $vvv = \fire($vv, [$vvv, $kk, $k], $that);
-                    } else {
-                        $vvv = \call_user_func(__NAMESPACE__ . "\\content\\" . ('style' === $kk ? $kk : 'script'), $vvv, $that[2]);
-                    }
-                    $that[$kk] = $vvv;
-                }
-                foreach ($v as $kk => $vv) {
-                    if (!$vv || !isset($that[$kk])) {
-                        continue;
-                    }
-                    $vvv = $that[$kk];
                     if (\is_callable($vv)) {
-                        $vvv = \fire($vv, [$vvv, $kk, $k], $that);
-                    } else {
-                        $vvv = \x\link\link($vvv);
+                        $e[$kk] = \fire($vv, [$e[$kk], $kk, $k], $e);
+                        continue;
                     }
-                    $that[$kk] = $vvv;
+                    $e[$kk] = \x\link\link($e[$kk]);
                 }
-                return (string) $that;
-            }, $content);
+                $r .= $e;
+                continue;
+            }
+            $r .= $v[0];
         }
-        return $content;
+        return $r;
     }
     function kick($path) {
         return \x\link\link($path ?? \lot('url')->current());
