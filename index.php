@@ -91,9 +91,9 @@ namespace x\link {
         }
         return $path;
     }
-    \Hook::set('content', __NAMESPACE__ . "\\content", 0);
-    \Hook::set('kick', __NAMESPACE__ . "\\kick", 0);
-    \Hook::set('link', __NAMESPACE__ . "\\link", 0);
+    \Hook::set('content', __NAMESPACE__ . "\\content", 2);
+    \Hook::set('kick', __NAMESPACE__ . "\\kick", 2);
+    \Hook::set('link', __NAMESPACE__ . "\\link", 2);
 }
 
 namespace x\link\content {
