@@ -79,7 +79,7 @@ namespace x\link {
         return $r;
     }
     function kick($path) {
-        return \x\link\link($path ?? \lot('url')->current());
+        return \x\link\link($path ?? \lot('link')->current());
     }
     function link($path) {
         if (\is_string($path)) {
